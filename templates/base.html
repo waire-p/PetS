@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PetS</title>
+    <link rel="stylesheet"
+                    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+                    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+                    crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+      <div class="col-md-3 mb-2 mb-md-0">
+        <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+          <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+        </a>
+      </div>
+
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="#" class="nav-link px-2 link-secondary">Главная</a></li>
+        <li><a href="#" class="nav-link px-2">Анкеты животных</a></li>
+        <li><a href="#" class="nav-link px-2">О сайте</a></li>
+        <li><a href="#" class="nav-link px-2">Полезные статьи</a></li>
+      </ul>
+
+      <div class="col-md-3 text-end">
+        <button type="button" class="btn btn-outline-primary me-2">Войти</button>
+        <button type="button" class="btn btn-primary">Зарегистрироваться</button>
+      </div>
+    </header>
+    </div>
+    {% block content %}{% endblock %}
+    <div class="container">
+    <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Главная</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Анкеты животных</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Правила сайта</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Конфиденциальность</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">О сайте</a></li>
+        </ul>
+        <p class="text-center text-body-secondary">© 2025 PetS</p>
+    </footer>
+</div>
+</body>
+</html>
