@@ -1,3 +1,35 @@
-a {
-  color: var(--bs-blue);
+.nav-link{
+    color: #A12312;
+}
+
+a:hover.nav-link{
+    color: #ce6a46;
+}
+a:active.nav-link {
+  color: #ce6a46;
+}
+button.btn {
+    background-color: white;
+    color:#A12312;
+    border: 2px solid #f6b2a7;
+    box-shadow: 0 0 0px;
+}
+
+button:hover.btn {
+    background-color: #A12312;
+    color:white;
+    border: 2px solid #f6b2a7;
+    box-shadow: 0 0 1px #f6b2a7,
+        0 0 2px #f6b2a7,
+        0 0 5px #f6b2a7,
+        0 0 10px #f6b2a7;
+}
+button:focus.btn, .btn-check:focus+.btn-primary, .btn-primary:focus {
+    background-color: #A12312;
+    color:white;
+    border: 0px;
+    box-shadow: 0 0 0 .25rem white;
+}
+transitions style {
+    box-shadow: white 0px 0px 0px 0px;
 }
