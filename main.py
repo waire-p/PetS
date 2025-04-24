@@ -1,13 +1,13 @@
 from flask import Flask
 from flask import render_template
 from data import db_session
+from data.animal_cards import PetCard
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
 
 
 @app.route('/')
-@app.route('/main_page')
 def main_page():
     return render_template('base.html')
 
@@ -15,6 +15,12 @@ def main_page():
 @app.route('/pets')
 def pet_catalog():
     return render_template('pet_catalog.html')
+
+
+@app.route('/pets/<card_id>')
+def pet_card(card_id):
+    card = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
+    return render_template('pet_card.html', id=card.id)
 
 
 if __name__ == '__main__':

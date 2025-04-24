@@ -3,6 +3,9 @@ from .db_session import SqlAlchemyBase
 import datetime
 
 class PetCard(SqlAlchemyBase):
+    __tablename__ = 'cards'
+
+
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey(""), nullable=False, unique=True)
     name = sqlalchemy.Column(sqlalchemy.String)
