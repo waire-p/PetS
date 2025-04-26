@@ -7,7 +7,7 @@ class PetCard(SqlAlchemyBase):
 
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey(""), nullable=False, unique=True)
+    #user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey(""), nullable=False, unique=True)
     name = sqlalchemy.Column(sqlalchemy.String)
     age =  sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     gender = sqlalchemy.Column(sqlalchemy.String, nullable=False)
@@ -15,4 +15,5 @@ class PetCard(SqlAlchemyBase):
     diseases = sqlalchemy.Column(sqlalchemy.String)
     city = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     about = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    created_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False, default=datetime.datetime.now )
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False, default=datetime.datetime.now)
+    contacts = sqlalchemy.Column(sqlalchemy.String, nullable=False)
