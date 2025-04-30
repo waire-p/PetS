@@ -16,6 +16,7 @@ def main_page():
 
 @app.route('/pets')
 def pet_catalog():
+
     #posts = sqlalchemy.paginate(query, page=1, per_page=20, error_out=False).items
     return render_template('pet_catalog.html')
 
