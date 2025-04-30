@@ -26,6 +26,9 @@ def pet_card(card_id):
     card = db_sess.query(PetCard).filter(PetCard.id == int(card_id)).first()
     return render_template('pet_card.html', id=card.id)
 
+@app.route("/login")
+def login():
+    return render_template('login.html')
 
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')
