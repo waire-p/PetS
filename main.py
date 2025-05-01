@@ -4,6 +4,8 @@ from flask import render_template
 from sqlalchemy.orm import query
 from data import db_session
 from data.animal_cards import PetCard
+from data.user import User
+from flask import request
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
@@ -26,9 +28,16 @@ def pet_card(card_id):
     card = db_sess.query(PetCard).filter(PetCard.id == int(card_id)).first()
     return render_template('pet_card.html', id=card.id)
 
-@app.route("/login")
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == "POST":
+        email = request.form.get("email")  # Получаем email из формы
+        password = request.form.get("password")  # Получаем пароль
+        print("Email:", email)
+        print("Пароль:", password)
     return render_template('login.html')
+
 
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')

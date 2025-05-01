@@ -1,6 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>Страница регистрации</p>
+<link rel="stylesheet" href="/static/css/main_page.css">
+<main class="form-signin w-100 m-auto d-flex justify-content-center">
+  <form action="/login" method="POST" style="width: 500px;">
+    <h1 class="h3 mb-3 fw-normal text-center">Авторизация</h1><br>
+
+    <div class="form-floating">
+      <input type="email" class="form-control border-danger" name="email" id="floatingInput" placeholder="name@example.com">
+      <label for="floatingInput">Адрес электронной почты</label><br>
+    </div>
+    <div class="form-floating">
+      <input type="password" class="form-control border-danger" name="password" id="floatingPassword" placeholder="Пароль">
+      <label for="floatingPassword">Пароль</label>
+    </div>
+
+    <div class="form-check text-start my-3">
+      <input class="form-check-input border-danger" type="checkbox" value="remember-me" id="checkDefault">
+      <label class="form-check-label" for="checkDefault">
+        Запомнить меня
+      </label>
+    </div>
+    <button class="btn btn-danger w-100 py-2" type="submit">Войти</button>
+  </form>
+</main>
+<script defer src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"></script>
 
 {% endblock %}
