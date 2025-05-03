@@ -30,7 +30,10 @@
         <button type="button" class="btn btn-danger">Зарегистрироваться</button>
       </div>
         {% else %}
-        <a>{{ user_now.login }}</a>
+        <div class="col-md-3 text-end">
+            <a href="/profile" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{ user_now.login }}</a>
+            <button type="button" onclick="location.href='/exit'" class="btn btn-outline-danger me-2">Выйти</button>
+        </div>
         {% endif %}
     </header>
     </div>
