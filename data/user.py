@@ -12,6 +12,7 @@ class User(SqlAlchemyBase):
     email = sqlalchemy.Column(sqlalchemy.String, nullable=False, unique=True, index=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     phone = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    pet_card = orm.relationship("PetCard", back_populates='user')
 
     def __repr__(self):
         return f"<User> {self.id} {self.login} {self.email}"

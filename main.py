@@ -25,10 +25,18 @@ def pet_catalog():
     return render_template('pet_catalog.html', user_now=user_now)
 
 
-@app.route('/pets/<card_id>')
+@app.route('/pets/<int:card_id>')
 def pet_card(card_id):
-    card = db_sess.query(PetCard).filter(PetCard.id == int(card_id)).first()
-    return render_template('pet_card.html', id=card.id)
+    db_sess = db_session.create_session()
+    try:
+        card = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
+        d = {'name':card.name, 'age': card.age, 'gender': card.gender, 'city':card.city,
+                'vaccinations':card.vaccinations, 'diseases': card.diseases, 'about':card.about}
+        return render_template('pet_card.html', **d)
+    except AttributeError:
+        return render_template('pet_error.html')
+    except TypeError:
+        return render_template('pet_card.html', name=card.name)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -51,4 +59,3 @@ def login():
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')
     db_session.global_init("db/PetSearch.db")
-    db_sess = db_session.create_session()
