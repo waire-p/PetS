@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container my-4">
+    <div class="big_Pets" align="center">Pets</div>
+    <div class="intro-wrap">
+        <div class="main-intro-text">
+            <h1 class="mn-1">
+                Здесь вы найдёте
+                <br>
+                животных, которые нуждаются в заботе
+            </h1>
+            <h2>Найди верного друга из приюта</h2>
+            <br>
+            <p>Помоги животным найти дом ❤️</p>
+            <form action="{{ url_for('pet_catalog') }}">
+              <button type="submit" class="btn">Посмотреть всех</button>
+            </form>
+        </div>
+        <span class="cat_dog"><img width="500" height="500" src="/static/images/cat_dog.png" ></span>
+    </div>
+</section>
+{% endblock %}

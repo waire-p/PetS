@@ -36,3 +36,18 @@ button:focus.btn, .btn-check:focus+.btn-primary, .btn-primary:focus {
 transitions style {
     box-shadow: white 0px 0px 0px 0px;
 }
+.mn-1{
+    margin-bottom: 2rem;
+}
+.big_Pets{
+    font-size: 4rem;
+    color:#E32636;
+    text-shadow:0 0 1px #f6b2a7,
+        0 0 2px #f6b2a7,
+        0 0 5px #f6b2a7,
+        0 0 10px #f6b2a7;
+}
+.intro-wrap {
+    display: flex;
+    flex-direction: row;
+}
