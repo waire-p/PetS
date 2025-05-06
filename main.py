@@ -1,7 +1,8 @@
-import sqlalchemy
+from datetime import datetime
+
 from flask import Flask
 from flask import render_template
-from sqlalchemy.orm import query
+
 from data import db_session
 from data.animal_cards import PetCard
 from data.user import User
@@ -10,38 +11,43 @@ from flask import request, redirect
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
 db_session.global_init("db/PetSearch.db")
-user_now = None
+USER_NOW= None
 
 
 @app.route('/')
 def main_page():
-    return render_template('base.html', user_now=user_now)
+    return render_template('base.html', user_now=USER_NOW)
 
 
 @app.route('/pets')
 def pet_catalog():
 
     #posts = sqlalchemy.paginate(query, page=1, per_page=20, error_out=False).items
-    return render_template('pet_catalog.html', user_now=user_now)
+    return render_template('pet_catalog.html', user_now=USER_NOW)
 
 
-@app.route('/pets/<int:card_id>')
+@app.route('/pets/<int:card_id>', methods=['GET'])
 def pet_card(card_id):
-    db_sess = db_session.create_session()
-    try:
-        card = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
-        d = {'name':card.name, 'age': card.age, 'gender': card.gender, 'city':card.city,
-                'vaccinations':card.vaccinations, 'diseases': card.diseases, 'about':card.about}
-        return render_template('pet_card.html', **d)
-    except AttributeError:
-        return render_template('pet_error.html')
-    except TypeError:
-        return render_template('pet_card.html', name=card.name)
+    if request.method == 'GET':
+        db_sess = db_session.create_session()
+        #try:
+            #card = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
+        #for card in db_sess.query(PetCard).all():
+            #if str(card_id) == str(card.id):
+        user = db_sess.query(PetCard).first()
+        print(user.id)
+                #d = {'name':card.name, 'age': card.age, 'gender': card.gender, 'city':card.city,
+                            #'vaccinations':card.vaccinations, 'diseases': card.diseases, 'about':card.about}
+                #return render_template('pet_card.html', **d)
+        #except AttributeError:
+            #return render_template('pet_error.html')
+        #except TypeError:
+            #return render_template('pet_card.html', name=card.name)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global user_now
+    global USER_NOW
     if request.method == "POST":
         email = request.form.get("email")  # Получаем email из формы
         password = request.form.get("password")  # Получаем пароль
@@ -51,10 +57,36 @@ def login():
         user = db_sess.query(User).filter(User.email == email).first()
         if not user:
             return render_template('login.html', message="Неверный пароль или email")
-        user_now = user
+        USER_NOW = user
         return redirect("/")
     return render_template('login.html')
 
+
+
+@app.route('/create_card', methods=['GET', 'POST'])
+def create_card():
+    global USER_NOW
+    if request.method == "POST":
+        photo = request.form.get("photo")
+        db_sess = db_session.create_session()
+        card = PetCard()
+        for user in db_sess.query(User).all():
+            if user.login == str(USER_NOW).split()[2]:
+                card.user_id = user.id
+                card.contacts = user.phone
+                break
+        card.name = request.form.get("name") # Получаем имя питомца
+        card.age = request.form.get("age") # Получаем возраст
+        card.gender = request.form.get("gender")# Получаем пол животного
+        card.vaccinations = request.form.get("vaccinations")# Получаем информацию о прививках
+        card.diseases = request.form.get("diseases")# Получаем инфу о болезнях
+        card.about = request.form.get("about")# Получаем доп. инфу о животном
+        card.created_date = datetime.today()
+        db_sess.add(card)
+        db_sess.commit()
+        return redirect("/")
+    elif request.method == 'GET':
+        return render_template('create_card.html', user_now=USER_NOW)
 
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')

@@ -1,8 +1,8 @@
-"""сохранение таблицы
+""" 
 
-Revision ID: 48cb6c0ead1d
+Revision ID: a5c58155ae1e
 Revises: 
-Create Date: 2025-04-30 17:20:06.477254
+Create Date: 2025-05-05 20:51:08.189855
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '48cb6c0ead1d'
+revision: str = 'a5c58155ae1e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
