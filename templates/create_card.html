@@ -7,40 +7,57 @@
     <h1 class="h3 mb-3 fw-normal text-center">Создание объявления</h1><br>
 
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="name" id="floatingInput" placeholder="Имя" required="required">
+      <input type="text" class="form-control border-danger" name="name" id="floatingInput"
+             placeholder="Имя" required="required" maxlength="30">
       <label for="floatingInput">Имя животного</label><br>
     </div>
-    <div class="form-floating">
-      <input type="number" class="form-control border-danger" name="age" id="floatingPassword" required="required">
-      <label for="floatingInput">Возраст</label><br>
+    <div class="input-group mb-3">
+      <div class="form-floating">
+      <input type="number" class="form-control border-danger" name="age1" id="floatingPassword" required="required" >
+      <label for="floatingInput">Возраст</label>
+        </div>
+      <div class="form-floating">
+      <select class="form-select" id="inputGroupSelect01" name="age2" required="required">
+        <option selected value="месяц">Временной промежуток</option>
+        <option value="день" name="age2">Дня(ей)</option>
+        <option value="неделя" name="age2">Недель(и)</option>
+        <option value="месяц" name="age2">Месяца(ев)</option>
+        <option value="год" name="age2">Лет(года)</option>
+      </select>
+         </div>
     </div>
     <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="gender" id="inlineRadio1" value="option1" autocomplete="мужской">
+      <input class="form-check-input" type="radio" name="gender" id="inlineRadio1" value="мужской"
+             autocomplete="мужской" required="required">
       <label class="form-check-label" for="inlineRadio1">Мужской пол</label>
     </div>
     <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="gender" id="inlineRadio2" value="option2" autocomplete="женский">
+      <input class="form-check-input" type="radio" name="gender" id="inlineRadio2" value="женский"
+             autocomplete="женский" required="required">
       <label class="form-check-label" for="inlineRadio2">Женский пол</label>
     </div>
     <br>
     <br>
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="vaccinations" id="floatingInput2" placeholder="Прививки(если есть)">
+      <input type="text" class="form-control border-danger" name="vaccinations" id="floatingInput2"
+             placeholder="Прививки(если есть)" maxlength="500">
       <label for="floatingInput">Прививки</label><br>
     </div>
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="diseases" id="floatingInput3" placeholder="Врожденные болезни(если есть)">
+      <input type="text" class="form-control border-danger" name="diseases" id="floatingInput3"
+             placeholder="Врожденные болезни(если есть)" maxlength="500">
       <label for="floatingInput">Врожденные болезни</label><br>
     </div>
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="about" id="floatingInput4" placeholder="Описание животного" required="required">
+      <input type="text" class="form-control border-danger" name="about" id="floatingInput4"
+             placeholder="Описание животного" required="required" maxlength="1000">
       <label for="floatingInput">Описание</label><br>
     </div>
+    <h3>Добавить фото животного</h3>
      <div class="form-floating">
-       <label for="floatingInput">Фото животного</label><br>
-      <input type="file" class="form-control-file" id="photo" name="file" accept="image/png, image/jpeg, image/jpg">
-
-    </div>
+      <input type="file" class="form-control-file" id="photo" name="file" accept="image/png, image/jpeg, image/jpg"
+      placeholder="Добавить фото животного">
+    </div><br>
     <button class="btn btn-danger w-100 py-2" type="submit">Отправить</button>
   </form>
 

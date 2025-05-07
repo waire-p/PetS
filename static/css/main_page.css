@@ -55,3 +55,14 @@ transitions style {
   color: #dc3545;
   font-size: 500%;
 }
+
+.form-select {
+    background-color: white;
+    border: 1px solid #dc3545 !important;
+}
+p{
+word-wrap: break-word;
+}
+.form-select{
+ width: 290px;
+}
