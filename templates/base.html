@@ -25,11 +25,13 @@
         <li><a href="/articles" class="nav-link px-2">Полезные статьи</a></li>
       </ul>
         {% if not user_now %}
-      <div class="col-md-3 text-end">
-        <button type="button" onclick="location.href='/login'" class="btn btn-outline-danger me-2">Войти</button>
-        <button type="button" class="btn btn-danger">Зарегистрироваться</button>
-      </div>
+          <div class="col-md-3 text-end">
+            <button type="button" onclick="location.href='/login'" class="btn btn-outline-danger me-2">Войти</button>
+            <button type="button" class="btn btn-danger">Зарегистрироваться</button>
+          </div>
         {% else %}
+            <button type="button" onclick="location.href='/create_card'" class="btn btn-danger">+Создать объявление</button>
+
         <div class="col-md-3 text-end">
             <a href="/profile" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{ user_now.login }}</a>
             <button type="button" onclick="location.href='/exit'" class="btn btn-outline-danger me-2">Выйти</button>

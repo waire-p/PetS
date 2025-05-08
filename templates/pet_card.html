@@ -1,6 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>{{ id }}, {{ name }}</p>
+
+<h1 class="title title--secondary pet-details__title">Имя: {{ name }}; Возраст: {{age}}</h1>
+<p>{{gender}} пол</p>
+<p>{{age}}</p>
+<h3>Описание</h3>
+<p>{{about}}</p>
+<div class="vstack gap-3">
+ <dl class="row">
+      <dt class="col-sm-3">Врожденные болезни</dt>
+        <dd class="col-sm-9">
+            <p><span>{{diseases}}</span></p>
+        </dd>
+
+      <dt class="col-sm-3">Прививки</dt>
+      <dd class="col-sm-9">
+          <p><span>{{vaccinations}}</span></p>
+      </dd>
+    </dl>
+</div>
+
 
 {% endblock %}
