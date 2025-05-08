@@ -15,7 +15,8 @@ USER_NOW = None
 
 @app.route('/')
 def main_page():
-    return render_template('base.html', user_now=USER_NOW) and render_template('main.html')
+    return (render_template('base.html', user_now=USER_NOW)
+            and render_template('main.html', user_now=USER_NOW))
 
 
 @app.route('/pets')
@@ -29,7 +30,7 @@ def pet_catalog():
 def about():
     with open('data/about.txt', encoding='utf-8') as file:
         about_text = file.read()
-    return render_template('about.html', about_text=about_text, user=USER_NOW)
+    return render_template('about.html', about_text=about_text, user_now=USER_NOW)
 
 
 @app.route('/articles')
@@ -46,7 +47,7 @@ def articles():
             "url": "https://harpersbazaar.kz/10-prichin-zabrat-zhivotnoe-iz-prijuta/"
         }
     ]
-    return render_template("articles.html", articles=articles, user=USER_NOW)
+    return render_template("articles.html", articles=articles, user_now=USER_NOW)
 
 
 @app.route('/pets/<card_id>')
@@ -76,7 +77,7 @@ def login():
 
 @app.route("/profile")
 def profile():
-    return render_template("profile.html", user=USER_NOW)
+    return render_template("profile.html", user=USER_NOW, user_now=USER_NOW)
 
 
 @app.route("/exit")
