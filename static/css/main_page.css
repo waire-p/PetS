@@ -36,6 +36,20 @@ button:focus.btn, .btn-check:focus+.btn-primary, .btn-primary:focus {
 transitions style {
     box-shadow: white 0px 0px 0px 0px;
 }
+.form-control:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+/* Общие стили для чекбокса */
+.form-check-input {
+  border: 2px solid #dc3545 !important; /* Красная рамка всегда */
+  background-color: white !important; /* Белый фон по умолчанию */
+  box-shadow: none !important; /* Убираем стандартную тень */
+}
+/* Стили для активного чекбокса */
+.form-check-input:checked {
+  background-color: #dc3545 !important; /* Красный фон */
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important; /* Свечение */}
 .mn-1{
     margin-bottom: 2rem;
 }

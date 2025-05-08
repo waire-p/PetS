@@ -24,11 +24,17 @@
         <li><a href="/about" class="nav-link px-2">О сайте</a></li>
         <li><a href="/articles" class="nav-link px-2">Полезные статьи</a></li>
       </ul>
-
+        {% if not user_now %}
       <div class="col-md-3 text-end">
-        <button type="button" class="btn btn-outline-danger me-2">Войти</button>
+        <button type="button" onclick="location.href='/login'" class="btn btn-outline-danger me-2">Войти</button>
         <button type="button" class="btn btn-danger">Зарегистрироваться</button>
       </div>
+        {% else %}
+        <div class="col-md-3 text-end">
+            <a href="/profile" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{ user_now.login }}</a>
+            <button type="button" onclick="location.href='/exit'" class="btn btn-outline-danger me-2">Выйти</button>
+        </div>
+        {% endif %}
     </header>
     </div>
     {% block content %}{% endblock %}
