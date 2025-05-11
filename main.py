@@ -23,8 +23,20 @@ def main_page():
 
 @app.route('/pets')
 def pet_catalog():
+    db_sess = db_session.create_session()
+    cards = []
+
+    for card in db_sess.query(PetCard).order_by(PetCard.created_date <= datetime.today()).all():
+        about = card.about
+        if len(about) >= 65:
+            about = card.about[:63] + '...'
+        cards.append({'id':card.id, 'name': card.name, 'age':card.age, 'about': about, 'gender': card.gender})
+        if len(cards) >= 12:
+            break
     # posts = sqlalchemy.paginate(query, page=1, per_page=20, error_out=False).items
-    return render_template('pet_catalog.html', user_now=USER_NOW)
+    return render_template('pet_catalog.html', user_now=USER_NOW, cards=cards)
+
+
 @app.route('/about')
 def about():
     with open('data/about.txt', encoding='utf-8') as file:
@@ -55,8 +67,8 @@ def pet_card(card_id):
         db_sess = db_session.create_session()
         for card in db_sess.query(PetCard).all():
             if card_id == card.id:
-                d = {'name':card.name, 'age': card.age, 'gender': card.gender,
-                        'vaccinations':card.vaccinations, 'diseases': card.diseases, 'about':card.about}
+                d = {'name': card.name, 'age': card.age, 'gender': card.gender,
+                     'vaccinations': card.vaccinations, 'diseases': card.diseases, 'about': card.about}
                 return render_template('pet_card.html', **d)
         return render_template('pet_error.html')
 
@@ -73,8 +85,8 @@ def login():
         user = db_sess.query(User).filter(User.email == email).first()
         if not user:
             return render_template('login.html', message="Почта не зарегистрирована")
-        #if not user.check_password(password):
-            #return render_template('login.html', message="Неверный пароль") Открыть после готовой регистрации
+        # if not user.check_password(password):
+        # return render_template('login.html', message="Неверный пароль") Открыть после готовой регистрации
         USER_NOW = user
         return redirect("/")
     return render_template('login.html')
@@ -97,7 +109,7 @@ def create_card():
     global USER_NOW
     morph = pymorphy3.MorphAnalyzer()
     if request.method == "POST":
-        #photo = request.form.get("file")
+        # photo = request.form.get("file")
         db_sess = db_session.create_session()
         card = PetCard()
 
@@ -109,12 +121,13 @@ def create_card():
         card.name = request.form.get("name")  # Получаем имя питомца
         age_time_units = morph.parse(request.form.get('age2'))[0]
         age_number = request.form.get("age1")
-        card.age =  str(age_number) + ' ' + age_time_units.make_agree_with_number(int(age_number)).word  # Получаем возраст
+        card.age = str(age_number) + ' ' + age_time_units.make_agree_with_number(
+            int(age_number)).word  # Получаем возраст
         card.gender = request.form.get("gender")  # Получаем пол животного
-        vac = request.form.get("vaccinations") # Получаем информацию о прививках
+        vac = request.form.get("vaccinations")  # Получаем информацию о прививках
         dis = request.form.get("diseases")  # Получаем инфу о болезнях
         if vac.strip() != '':
-            card.vaccinations =  vac
+            card.vaccinations = vac
         if dis.strip() != '':
             card.diseases = dis
         card.about = request.form.get("about")  # Получаем доп. инфу о животном
