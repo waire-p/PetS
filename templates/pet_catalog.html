@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<link rel="stylesheet" href="/static/css/main_page.css">
 <div class="container my-4">
    <h2 class="mb-4">Фильтр объявлений</h2>
    <form method="GET" action="/filter" class="card p-4 shadow-sm filter-form">
@@ -70,25 +70,27 @@
             </div>
           {% endfor %}
       </div>
+    </div><br>
+  <div class="d-flex justify-content-center align-items-center">
+    <nav aria-label="...">
+          <ul class="pagination">
+            {% if page > 1 %}
+            <li class="page-item">
+            <a href="/pets?page={{ page - 1 }}" class="page-link">Previous</a>
+            </li>
+            {% endif %}
+            <li class="page-item active">
+              <a class="page-link" href="/pets?page={{ page }}" >{{ page }}</a>
+            </li>
+            {% if page < total_pages %}
+            <li class="page-item">
+              <a class="page-link" href="/pets?page={{ page + 1 }}">Next</a>
+            </li>
+            {% endif %}
+          </ul>
+      </nav>
     </div>
   </div>
 
-<!-- Доделать позже -->
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+
 {% endblock %}

@@ -81,3 +81,25 @@ word-wrap: break-word;
 .form-select{
  width: 290px;
 }
+
+.page-link {
+    color: #A12312;
+    background-color: white;
+
+}
+
+a:hover.page-link{
+    color: white;
+    background-color: #A12312;
+    border-color: #A12312;
+    box-shadow: 0 0 1px #f6b2a7,
+        0 0 2px #f6b2a7,
+        0 0 5px #f6b2a7,
+        0 0 10px #f6b2a7;
+}
+
+.page-item.active .page-link{
+    color: white;
+    background-color: #A12312;
+    border-color: #A12312;
+}

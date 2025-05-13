@@ -25,16 +25,18 @@ def main_page():
 def pet_catalog():
     db_sess = db_session.create_session()
     cards = []
-
-    for card in db_sess.query(PetCard).order_by(PetCard.created_date <= datetime.today()).all():
+    page = request.args.get('page', 1, type=int)
+    per_page = 12
+    total_items = len(db_sess.query(PetCard).all())
+    total_pages = (total_items + per_page - 1) // per_page
+    start = (page - 1) * per_page
+    end = start + per_page
+    for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).all()[start:end]:
         about = card.about
         if len(about) >= 65:
             about = card.about[:63] + '...'
         cards.append({'id':card.id, 'name': card.name, 'age':card.age, 'about': about, 'gender': card.gender})
-        if len(cards) >= 12:
-            break
-    # posts = sqlalchemy.paginate(query, page=1, per_page=20, error_out=False).items
-    return render_template('pet_catalog.html', user_now=USER_NOW, cards=cards)
+    return render_template('pet_catalog.html', user_now=USER_NOW, cards=cards, page=page, total_pages=total_pages)
 
 
 @app.route('/about')
@@ -94,7 +96,25 @@ def login():
 
 @app.route("/profile")
 def profile():
-    return render_template("profile.html", user=USER_NOW, user_now=USER_NOW)
+    db_sess = db_session.create_session()
+    for user in db_sess.query(User).all():
+        if user.login == str(USER_NOW).split()[2]:
+            user_id = user.id
+            break
+    cards = []
+    page = request.args.get('page', 1, type=int)
+    per_page = 12
+    total_items = len(db_sess.query(PetCard).filter(PetCard.user_id == user_id).all())
+    total_pages = (total_items + per_page - 1) // per_page
+    start = (page - 1) * per_page
+    end = start + per_page
+    for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).filter(PetCard.user_id == user_id).all()[start:end]:
+        about = card.about
+        if len(about) >= 65:
+            about = card.about[:63] + '...'
+        cards.append({'id': card.id, 'name': card.name, 'age': card.age, 'about': about, 'gender': card.gender})
+    return render_template('profile.html', user_now=USER_NOW, cards=cards, page=page,
+                           total_pages=total_pages, user=USER_NOW)
 
 
 @app.route("/exit")
