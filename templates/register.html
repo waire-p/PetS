@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/main_page.css">
+<main class="form-signin w-100 m-auto d-flex justify-content-center">
+  <form action="/register" method="POST" style="width: 500px;">
+    <h1 class="h2 mb-3 fw-normal text-center">Регистрация</h1>
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.email.label }}<br>
+        {{ form.email(class="form-control", type="email") }}<br>
+        {% for error in form.email.errors %}
+            <a class="alert alert-danger" role="alert">
+                {{ error }}
+            </a>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.password.label }}<br>
+        {{ form.password(class="form-control", type="password") }}<br>
+        {% for error in form.password.errors %}
+            <a class="alert alert-danger" role="alert">
+                {{ error }}
+            </a>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.password_again.label }}<br>
+        {{ form.password_again(class="form-control", type="password") }}<br>
+        {% for error in form.password_again.errors %}
+            <a class="alert alert-danger" role="alert">
+                {{ error }}
+            </a>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.name.label }}<br>
+        {{ form.name(class="form-control") }}<br>
+        {% for error in form.name.errors %}
+            <a class="alert alert-danger" role="alert">
+                {{ error }}
+            </a>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.phone.label }}<br>
+        {{ form.phone(class="form-control") }}<br>
+        {% for error in form.phone.errors %}
+            <a class="alert alert-danger" role="alert">
+                {{ error }}
+            </a>
+        {% endfor %}
+    </div>
+      <h5 class="h5 mb-3 fw-normal text-center color-danger">{{ message }}</h5>
+    <h3 class="h3 mb-3 fw-normal text-center">{{ form.submit(type="submit", class="btn btn-danger w-75") }}</h3>
+
+</form>
+</main>
+<script defer src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"></script>
+
+{% endblock %}

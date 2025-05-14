@@ -27,7 +27,7 @@ a {font-size: 18px}
             {% if user.phone != None %}
         <li><a><em> {{ user.phone }}</em></a>
             {% else %}
-        <li><a><em>Не привязан</em></a>
+        <li><button type="button" onclick="location.href='/phone'" class="btn btn-outline-danger me-2">Привязать</button></li>
             {%endif%}
             </ul>
     </div>

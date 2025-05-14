@@ -4,10 +4,14 @@ from flask import Flask
 from flask import render_template
 from sqlalchemy.orm import query
 import pymorphy3
+from flask import request, redirect
+import re
+
 from data import db_session
 from data.animal_cards import PetCard
 from data.user import User
-from flask import request, redirect
+from form.register import Register
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
@@ -25,6 +29,8 @@ def main_page():
 def pet_catalog():
     # posts = sqlalchemy.paginate(query, page=1, per_page=20, error_out=False).items
     return render_template('pet_catalog.html', user_now=USER_NOW)
+
+
 @app.route('/about')
 def about():
     with open('data/about.txt', encoding='utf-8') as file:
@@ -80,9 +86,52 @@ def login():
     return render_template('login.html')
 
 
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    global USER_NOW
+    form = Register()
+    if form.validate_on_submit():
+        # number = request.form.get('number')
+        # if not re.match(r'^\+7\d{10}$', number):
+        #     flash('Некорректный формат номера')
+        #     return redirect('/phone')
+        if form.password.data != form.password_again.data:
+            return render_template("register.html", user_now=USER_NOW, form=form, message="Пароли не совпадают")
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация', form=form, message="Пользователь уже зарегистрирован")
+        try:
+            user = User(login=form.name.data, email=form.email.data, phone=form.phone.data)
+        except Exception:
+            user = User(login=form.name.data, email=form.email.data, phone=None)
+        user.set_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        USER_NOW = user
+        return redirect("/")
+    return render_template("register.html", user_now=USER_NOW, form=form)
+
+
 @app.route("/profile")
 def profile():
     return render_template("profile.html", user=USER_NOW, user_now=USER_NOW)
+
+
+@app.route("/phone", methods=['GET', 'POST'])
+def phone():
+    global USER_NOW
+    if request.method == "POST":
+        number = request.form.get('number')
+        if not re.match(r'^\+7\d{10}$', number):
+            flash('Некорректный формат номера')
+            return redirect('/phone')
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).get(USER_NOW.id)
+        user.phone = number
+        USER_NOW = user
+        db_sess.commit()
+        return redirect('/profile')
+    return render_template("phone.html", user_now=USER_NOW)
 
 
 @app.route("/exit")
