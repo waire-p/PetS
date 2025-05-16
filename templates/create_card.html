@@ -3,17 +3,16 @@
 {% block content %}
 <link rel="stylesheet" href="/static/css/main_page.css">
 <main class="form-signin w-100 m-auto d-flex justify-content-center">
-  <form action="/create_card" method="POST" style="width: 500px;">
+  <form action="/pets/create_card" method="POST" style="width: 500px;">
     <h1 class="h3 mb-3 fw-normal text-center">Создание объявления</h1><br>
-
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="name" id="floatingInput"
-             placeholder="Имя" required="required" maxlength="14">
-      <label for="floatingInput">Имя животного</label><br>
+      <input {{ form.name(class="form-control border-danger", type="text", maxlength="14", required="required", id="floatingInput") }}
+      <br>
+      <label for="floatingInput">Имя животного</label>
     </div>
     <div class="input-group mb-3">
       <div class="form-floating">
-      <input type="number" class="form-control border-danger" name="age1" id="floatingPassword" required="required" max="99">
+        <input {{ form.age1(class="form-control border-danger", type="number", required="required", max="99", id="floatingInput2")}}
       <label for="floatingInput">Возраст</label>
         </div>
       <div class="form-floating">
@@ -39,18 +38,15 @@
     <br>
     <br>
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="vaccinations" id="floatingInput2"
-             placeholder="Прививки(если есть)" maxlength="500">
+      <input {{ form.vaccinations(class="form-control border-danger", type="text", required="required", maxlength="500", id="floatingInput3") }}
       <label for="floatingInput">Прививки</label><br>
     </div>
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="diseases" id="floatingInput3"
-             placeholder="Врожденные болезни(если есть)" maxlength="500">
+      <input {{ form.diseases(class="form-control border-danger", type="text", required="required", maxlength="500", id="floatingInput4") }}
       <label for="floatingInput">Врожденные болезни</label><br>
     </div>
     <div class="form-floating">
-      <input type="text" class="form-control border-danger" name="about" id="floatingInput4"
-             placeholder="Описание животного" required="required" maxlength="1000">
+      <input {{ form.about(class="form-control border-danger", type="text", required="required", maxlength="1000", id="floatingInput5") }}
       <label for="floatingInput">Описание</label><br>
     </div>
     <h3>Добавить фото животного</h3>
@@ -60,7 +56,6 @@
     </div><br>
     <button class="btn btn-danger w-100 py-2" type="submit">Отправить</button>
   </form>
-
 </main>
 <script defer src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"></script>
 

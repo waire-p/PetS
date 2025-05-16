@@ -1,16 +1,17 @@
-import sqlalchemy
 from datetime import datetime
+
+import pymorphy3
 from flask import Flask
 from flask import render_template
+from flask import request, redirect
 from pymorphy3 import MorphAnalyzer
-from sqlalchemy.orm import query
-import pymorphy3
+
 from data import db_session
 from data.animal_cards import PetCard
+from data.create_age_table import create_table
 from data.pet_age import PetAge
 from data.user import User
-from flask import request, redirect
-from data.create_age_table import create_table
+from forms.create_card import CreatePetCard
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
@@ -158,42 +159,40 @@ def exit():
     USER_NOW = None
     return redirect("/")
 
-@app.route('/create_card', methods=['GET', 'POST'])
-def edit_card():
+@app.route('/pets/create_card', methods=['GET', 'POST'])
+def create_card():
     global USER_NOW
-    if request.method == "POST":
-        # photo = request.form.get("file")
+    form = CreatePetCard()
+    if form.validate_on_submit():
         db_sess = db_session.create_session()
         card = PetCard()
-
         for user in db_sess.query(User).all():
             if user.login == str(USER_NOW).split()[2]:
                 card.user_id = user.id
                 card.contacts = user.phone
                 break
-        card.name = request.form.get("name")  # Получаем имя питомца
-        age_time_units = request.form.get('age2')
-        age_number = request.form.get("age1")
+        card.name = form.name.data  # Получаем имя питомца
+        print(card.name)
+        age_time_units = form.age2.data
+        age_number = form.age1.data
         card.age = str(age_number) + ' ' + age_time_units  # Получаем возраст
-        card.gender = request.form.get("gender")  # Получаем пол животного
-        vac = request.form.get("vaccinations")  # Получаем информацию о прививках
-        dis = request.form.get("diseases")  # Получаем инфу о болезнях
+        card.gender = form.gender.data  # Получаем пол животного
+        vac = form.vaccinations.data  # Получаем информацию о прививках
+        dis = form.diseases.data  # Получаем инфу о болезнях
         if vac.strip() != '':
             card.vaccinations = vac
         if dis.strip() != '':
             card.diseases = dis
-        card.about = request.form.get("about")  # Получаем доп. инфу о животном
+        card.about = form.about.data  # Получаем доп. инфу о животном
         card.created_date = datetime.today()
         db_sess.add(card)
         db_sess.commit()
         return redirect("/")
-    elif request.method == 'GET':
+    return render_template('create_card.html', user_now=USER_NOW, form=form)
 
-        return render_template('create_card.html', user_now=USER_NOW)
 
-@app.route('/create_card', methods=['GET', 'POST'])
-def create_card():
-    global USER_NOW
+@app.route('/pets/<int:card_id>/edit_card', methods=['GET', 'POST'])
+def edit_card(card_id):
     if request.method == "POST":
         # photo = request.form.get("file")
         db_sess = db_session.create_session()
