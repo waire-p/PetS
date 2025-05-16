@@ -71,6 +71,7 @@
           {% endfor %}
       </div>
     </div><br>
+      {% if total_pages < 1 %}
   <div class="d-flex justify-content-center align-items-center">
     <nav aria-label="...">
           <ul class="pagination">
@@ -90,7 +91,9 @@
           </ul>
       </nav>
     </div>
-  </div>
+      {% endif %}
+</div>
+
 
 
 {% endblock %}

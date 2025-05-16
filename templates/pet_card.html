@@ -2,13 +2,19 @@
 
 {% block content %}
 
-
-
 <div class="row">
     <div class="w-50 mx-auto">
-      <h1 class="title title--secondary pet-details__title">Имя: {{ name }}; Возраст: {{age}}</h1>
-        <p>{{gender}} пол</p>
-        <p>{{age}}</p>
+        <div class="hstack gap-3">
+  <div class="p-2">
+      <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets'">Назад</button>
+  </div>
+  <div class="p-2 ms-auto">
+      <h3>Пользователь: {{ user_id }}</h3>
+  </div>
+</div>
+      <h2 class="title title--secondary pet-details__title">Имя: {{ name }}; Возраст: {{age}}</h2>
+        <p>Пол: {{gender}}</p>
+        <p>Возраст: {{age}}</p>
         <h3>Описание</h3>
         <p>{{about}}</p>
         <div class="vstack gap-3 overflow-y-hidden">
@@ -22,8 +28,31 @@
               <dd class="col-sm-9">
                   <p><span>{{vaccinations}}</span></p>
               </dd>
+             {% if user_now %}
+             <br><br><br><br>
+             <dt class="col-sm-3">Номер телефона</dt>
+             <dd class="col-sm-9">
+                 {% if phone %}
+                 <p><span>{{phone}}</span></p>
+                 {% else %}
+                  <p><span>Данные отсутствуют</span></p>
+                 {% endif %}
+              </dd>
+             <dt class="col-sm-3">Почта</dt>
+             <dd class="col-sm-9">
+                 {% if email %}
+                 <p><span>{{email}}</span></p>
+                 {% else %}
+                  <p><span>Данные отсутствуют</span></p>
+                 {% endif %}
+              </dd>
+             {% else %}
+             <p>Чтобы узнать контактные данные, войдите в аккаунт</p>
+             {% endif %}
             </dl>
         </div>
+
+
     </div>
 </div>
 {% endblock %}

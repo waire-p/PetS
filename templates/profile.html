@@ -58,6 +58,8 @@ a {font-size: 18px}
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                       <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets/{{ card['id'] }}'">Открыть</button>
+                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets/{{ card['id'] }}'">Изменить</button>
+                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets/{{ card['id'] }}'">Удалить</button>
                     </div>
                   </div>
                 </div>
@@ -65,9 +67,11 @@ a {font-size: 18px}
             </div>
           {% endfor %}
       </div>
-    </div><br>
-    {% if total_pages != 0 %}
 
+    </div>
+
+    <br>
+    {% if total_pages < 1> %}
   <div class="d-flex justify-content-center align-items-center">
     <nav aria-label="...">
           <ul class="pagination">
