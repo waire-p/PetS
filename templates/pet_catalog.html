@@ -50,12 +50,12 @@
           {% for card in cards %}
             <div class="col">
               <div class="card shadow-sm">
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice">
-                  <title>Placeholder</title>
+                <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="/static/images/br.jpg" role="img" aria-label="Placeholder: Thumbnail">
+
                   <rect width="100%" height="100%" fill="#55595c">
                   </rect>
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">Картинка не найдена</text>
-                </svg>
+                  <text x="10%" y="50%" fill="#eceeef" dy=".3em">Картинки не завезли, ждите обновления</text>
+                </img>
                 <div class="card-body">
                   <h4>{{ card['name'] }}, {{ card['age'] }}</h4>
                   <p>Пол: {{ card['gender'] }}</p>
@@ -71,7 +71,7 @@
           {% endfor %}
       </div>
     </div><br>
-      {% if total_pages < 1 %}
+      {% if total_pages > 1 %}
   <div class="d-flex justify-content-center align-items-center">
     <nav aria-label="...">
           <ul class="pagination">

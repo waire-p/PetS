@@ -42,15 +42,16 @@ a {font-size: 18px}
 </figure>
     <div class="container">
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
           {% for card in cards %}
             <div class="col">
               <div class="card shadow-sm">
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice">
-                  <title>Placeholder</title>
+                <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="/static/images/br.jpg" role="img" aria-label="Placeholder: Thumbnail">
+
                   <rect width="100%" height="100%" fill="#55595c">
                   </rect>
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">Картинка не найдена</text>
-                </svg>
+                  <text x="10%" y="50%" fill="#eceeef" dy=".3em">Картинки не завезли, ждите обновления</text>
+                </img>
                 <div class="card-body">
                   <h4>{{ card['name'] }}, {{ card['age'] }}</h4>
                   <p>Пол: {{ card['gender'] }}</p>
@@ -59,7 +60,7 @@ a {font-size: 18px}
                     <div class="btn-group">
                       <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets/{{ card['id'] }}'">Открыть</button>
                          <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets/{{ card['id'] }}/edit_card'">Изменить</button>
-                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets/{{ card['id'] }}'">Удалить</button>
+                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets/{{ card['id'] }}/delete_card'">Удалить</button>
                     </div>
                   </div>
                 </div>
@@ -71,7 +72,7 @@ a {font-size: 18px}
     </div>
 
     <br>
-    {% if total_pages < 1 %}
+  {% if total_pages > 1 %}
   <div class="d-flex justify-content-center align-items-center">
     <nav aria-label="...">
           <ul class="pagination">
@@ -91,10 +92,11 @@ a {font-size: 18px}
           </ul>
       </nav>
     </div>
-    {% else %}
-    <figure class="text-center">
+  {% endif %}
+{% if cards == [] %}
+            <figure class="text-center">
         <h3>Вы не размещали объявлений</h3>
     </figure>
-    {% endif %}
+            {% endif %}
   </div>
 {% endblock %}

@@ -1,7 +1,8 @@
+import sqlalchemy
 from datetime import datetime
 
 import pymorphy3
-from flask import Flask
+from flask import Flask, abort
 from flask import render_template
 from flask import request, redirect
 from pymorphy3 import MorphAnalyzer
@@ -11,17 +12,20 @@ from data.animal_cards import PetCard
 from data.create_age_table import create_table
 from data.pet_age import PetAge
 from data.user import User
-from forms.create_card import CreatePetCard
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
 db_session.global_init("db/PetSearch.db")
 USER_NOW = None
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html')
+
 
 @app.route('/')
 def main_page():
-
+    create_table()
     return (render_template('base.html', user_now=USER_NOW)
             and render_template('main.html', user_now=USER_NOW))
 
@@ -39,14 +43,14 @@ def pet_catalog():
     end = start + per_page
     for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).all()[start:end]:
         about = card.about
-        age_value, age_id = str(card.age).split()
+        age_value, age_id = card.age_value, card.age_id
         age_units_name = ''
         for name in db_sess.query(PetAge).all():
-            if name.id == int(age_id):
+            if name.id == age_id:
                 age_units_name = name.age
                 break
-        res = morph.parse(age_units_name)[0]
-        age = age_value + ' ' + res.make_agree_with_number(int(age_value)).word
+        res = morph.parse(str(age_units_name))[0]
+        age = str(age_value) + ' ' + res.make_agree_with_number(age_value).word
         if len(about) >= 65:
             about = card.about[:63] + '...'
         cards.append({'id':card.id, 'name': card.name, 'age': age, 'about': about, 'gender': card.gender})
@@ -86,14 +90,14 @@ def pet_card(card_id):
             if card_id == card.id:
                 id = card.user_id
                 user = db_sess.query(User).filter(User.id == id).first()
-                age_value, age_id = str(card.age).split()
+                age_value, age_id = card.age_value, card.age_id
                 age_units_name = ''
                 for name in db_sess.query(PetAge).all():
-                    if name.id == int(age_id):
+                    if name.id == age_id:
                         age_units_name = name.age
                         break
-                res = morph.parse(age_units_name)[0]
-                age = age_value + ' ' + res.make_agree_with_number(int(age_value)).word
+                res = morph.parse(str(age_units_name))[0]
+                age = str(age_value) + ' ' + res.make_agree_with_number(age_value).word
                 d = {'name': card.name, 'age': age, 'gender': card.gender,
                      'vaccinations': card.vaccinations, 'diseases': card.diseases, 'about': card.about,
                      'phone': user.phone, 'email': user.email}
@@ -138,14 +142,14 @@ def profile():
     end = start + per_page
     for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).filter(PetCard.user_id == user_id).all()[start:end]:
         about = card.about
-        age_value, age_id = str(card.age).split()
+        age_value, age_id = card.age_value, card.age_id
         age_units_name = ''
         for name in db_sess.query(PetAge).all():
-            if name.id == int(age_id):
+            if name.id == age_id:
                 age_units_name = name.age
                 break
-        res = morph.parse(age_units_name)[0]
-        age = age_value + ' ' + res.make_agree_with_number(int(age_value)).word
+        res = morph.parse(str(age_units_name))[0]
+        age = str(age_value) + ' ' + res.make_agree_with_number(age_value).word
         if len(about) >= 65:
             about = card.about[:63] + '...'
         cards.append({'id': card.id, 'name': card.name, 'age': age, 'about': about, 'gender': card.gender})
@@ -159,54 +163,56 @@ def exit():
     USER_NOW = None
     return redirect("/")
 
-@app.route('/pets/create_card', methods=['GET', 'POST'])
-def create_card():
+@app.route('/pets/<int:card_id>/edit_card', methods=['GET', 'POST'])
+def edit_card(card_id):
     global USER_NOW
-    form = CreatePetCard()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        card = PetCard()
-        for user in db_sess.query(User).all():
-            if user.login == str(USER_NOW).split()[2]:
-                card.user_id = user.id
-                card.contacts = user.phone
-                break
-        card.name = form.name.data  # Получаем имя питомца
-        print(card.name)
-        age_time_units = form.age2.data
-        age_number = form.age1.data
-        card.age = str(age_number) + ' ' + age_time_units  # Получаем возраст
-        card.gender = form.gender.data  # Получаем пол животного
-        vac = form.vaccinations.data  # Получаем информацию о прививках
-        dis = form.diseases.data  # Получаем инфу о болезнях
+    db_sess = db_session.create_session()
+    card =  db_sess.query(PetCard).filter(PetCard.id == card_id).first()
+    user = db_sess.query(User).filter(User.id == int(str(USER_NOW).split()[1])).first()
+
+    if request.method == "POST" and user.id == card.user_id:
+        if request.form.get("name") != '':
+            card.name = request.form.get("name") # Получаем имя питомца
+        if request.form.get('age2') != '':
+            card.age_id = int(request.form.get('age2'))
+        if request.form.get("age1") != '':
+            card.age_value = int(request.form.get("age1"))  # Получаем возраст
+        if request.form.get("gender"):
+            card.gender = request.form.get("gender")  # Получаем пол животного
+        vac = request.form.get("vaccinations")  # Получаем информацию о прививках
+        dis = request.form.get("diseases")  # Получаем инфу о болезнях
         if vac.strip() != '':
             card.vaccinations = vac
         if dis.strip() != '':
             card.diseases = dis
-        card.about = form.about.data  # Получаем доп. инфу о животном
-        card.created_date = datetime.today()
-        db_sess.add(card)
+        if request.form.get("about") != '':
+            card.about = request.form.get("about")  # Получаем доп. инфу о животном
+        db_sess.merge(card)
         db_sess.commit()
         return redirect("/")
-    return render_template('create_card.html', user_now=USER_NOW, form=form)
+    elif request.method == 'GET' and user.id == card.user_id:
+        if card:
+            return render_template('edit_card.html', user_now=USER_NOW, card_id=card_id)
+        else:
+            abort(404)
+    elif user.id != card.user_id:
+        return render_template('perm_error.html')
 
 
-@app.route('/pets/<int:card_id>/edit_card', methods=['GET', 'POST'])
-def edit_card(card_id):
+@app.route('/create_card', methods=['GET', 'POST'])
+def create_card():
+    global USER_NOW
     if request.method == "POST":
-        # photo = request.form.get("file")
         db_sess = db_session.create_session()
         card = PetCard()
 
         for user in db_sess.query(User).all():
             if user.login == str(USER_NOW).split()[2]:
                 card.user_id = user.id
-                card.contacts = user.phone
                 break
         card.name = request.form.get("name")  # Получаем имя питомца
-        age_time_units = request.form.get('age2')
-        age_number = request.form.get("age1")
-        card.age = str(age_number) + ' ' + age_time_units  # Получаем возраст
+        card.age_id = int(request.form.get('age2'))
+        card.age_value = int(request.form.get("age1"))# Получаем возраст
         card.gender = request.form.get("gender")  # Получаем пол животного
         vac = request.form.get("vaccinations")  # Получаем информацию о прививках
         dis = request.form.get("diseases")  # Получаем инфу о болезнях
@@ -215,7 +221,8 @@ def edit_card(card_id):
         if dis.strip() != '':
             card.diseases = dis
         card.about = request.form.get("about")  # Получаем доп. инфу о животном
-        card.created_date = datetime.today()
+        date = datetime.today()
+        card.created_date = date
         db_sess.add(card)
         db_sess.commit()
         return redirect("/")
@@ -223,8 +230,30 @@ def edit_card(card_id):
         return render_template('create_card.html', user_now=USER_NOW)
 
 
+
+@app.route('/pets/<int:card_id>/delete_card', methods=['GET', 'POST'])
+def delete_card(card_id):
+    db_sess = db_session.create_session()
+    obj = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
+    user = db_sess.query(User).filter(User.id ==  int(str(USER_NOW).split()[1])).first()
+
+    if request.method == 'GET' and user.id == obj.user_id:
+        return render_template('delete_card.html', user_now=USER_NOW)
+    elif 'yes' in request.form and user.id == obj.user_id:
+        if obj:
+            db_sess.delete(obj)
+            db_sess.commit()
+            return redirect("/")
+        else:
+            return abort(404)
+    elif 'no'in request.form and user.id == obj.user_id:
+        return  redirect('/profile')
+    elif user.id != obj.user_id:
+        return render_template('perm_error.html')
+
+
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')
     db_session.global_init("db/PetSearch.db")
-    db_sess = db_session.create_session()
     create_table()
+    db_sess = db_session.create_session()

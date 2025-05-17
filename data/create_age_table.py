@@ -3,10 +3,9 @@ from data import db_session
 
 
 def create_table():
-    db_session.global_init("db/PetSearch.db")
     db_sess = db_session.create_session()
     age_check = db_sess.query(PetAge).first()
-    if age_check.id != 1:
+    if age_check == None:
         age1 = PetAge()
         age2 = PetAge()
         age3 = PetAge()

@@ -6,7 +6,11 @@
     <div class="w-50 mx-auto">
         <div class="hstack gap-3">
   <div class="p-2">
-      <button type="button" class="btn btn-sm btn-outline-danger" onclick="location.href='/pets'">Назад</button>
+      <button type="button" class="btn btn-sm btn-outline-danger" onclick="goBack()">Назад</button>
+      <script>
+      function goBack()
+      {window.history.back();}
+      </script>
   </div>
   <div class="p-2 ms-auto">
       <h3>Пользователь: {{ user_id }}</h3>
