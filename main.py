@@ -1,12 +1,6 @@
-import sqlalchemy
 from datetime import datetime
-from flask import Flask
-from flask import render_template
-from sqlalchemy.orm import query
-import pymorphy3
-from flask import request, redirect, make_response
-import re
 
+import pymorphy3
 from flask import Flask, abort
 from flask import render_template
 from flask import request, redirect
@@ -18,7 +12,6 @@ from data.create_age_table import create_table
 from data.pet_age import PetAge
 from data.user import User
 from form.register import Register
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
@@ -141,7 +134,7 @@ def pet_card(card_id):
                      'vaccinations': card.vaccinations, 'diseases': card.diseases, 'about': card.about,
                      'phone': user.phone, 'email': user.email}
                 creator_id = str(user).split()[2]
-                return render_template('pet_card.html', **d, user_id = creator_id, user_now=USER_NOW)
+                return render_template('pet_card.html', **d, user_id = creator_id, user_now=user_now)
         return render_template('pet_error.html', user_now=user_now)
 
 
@@ -192,7 +185,7 @@ def profile():
     user_now = get_user(USER_ID)
     db_sess = db_session.create_session()
     for user in db_sess.query(User).all():
-        if user.login == str(USER_NOW).split()[2]:
+        if user.login == USER_ID:
             user_id = user.id
             break
     cards = []
@@ -215,7 +208,7 @@ def profile():
         if len(about) >= 65:
             about = card.about[:63] + '...'
         cards.append({'id': card.id, 'name': card.name, 'age': age, 'about': about, 'gender': card.gender})
-    return render_template('profile.html', user_now=USER_NOW, cards=cards, page=page,
+    return render_template('profile.html', user_now=user_now, cards=cards, page=page,
                            total_pages=total_pages, user=user_now)
 
 
@@ -227,10 +220,10 @@ def exit():
 
 @app.route('/pets/<int:card_id>/edit_card', methods=['GET', 'POST'])
 def edit_card(card_id):
-    global USER_NOW
+    user_now = get_user(USER_ID)
     db_sess = db_session.create_session()
     card =  db_sess.query(PetCard).filter(PetCard.id == card_id).first()
-    user = db_sess.query(User).filter(User.id == int(str(USER_NOW).split()[1])).first()
+    user = db_sess.query(User).filter(User.id == USER_ID).first()
 
     if request.method == "POST" and user.id == card.user_id:
         if request.form.get("name") != '':
@@ -254,7 +247,7 @@ def edit_card(card_id):
         return redirect("/")
     elif request.method == 'GET' and user.id == card.user_id:
         if card:
-            return render_template('edit_card.html', user_now=USER_NOW, card_id=card_id)
+            return render_template('edit_card.html', user_now=user_now, card_id=card_id)
         else:
             abort(404)
     elif user.id != card.user_id:
@@ -263,15 +256,13 @@ def edit_card(card_id):
 
 @app.route('/create_card', methods=['GET', 'POST'])
 def create_card():
-    global USER_ID
-    morph = pymorphy3.MorphAnalyzer()
     user_now = get_user(USER_ID)
     if request.method == "POST":
         db_sess = db_session.create_session()
         card = PetCard()
 
         for user in db_sess.query(User).all():
-            if user.login == str(user_now).split()[2]:
+            if user.login == USER_ID:
                 card.user_id = user.id
                 break
         card.name = request.form.get("name")  # Получаем имя питомца
@@ -309,12 +300,13 @@ def rules():
 
 @app.route('/pets/<int:card_id>/delete_card', methods=['GET', 'POST'])
 def delete_card(card_id):
+    user_now = get_user(USER_ID)
     db_sess = db_session.create_session()
     obj = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
-    user = db_sess.query(User).filter(User.id ==  int(str(USER_NOW).split()[1])).first()
+    user = db_sess.query(User).filter(User.id ==  USER_ID).first()
 
     if request.method == 'GET' and user.id == obj.user_id:
-        return render_template('delete_card.html', user_now=USER_NOW)
+        return render_template('delete_card.html', user_now=user_now)
     elif 'yes' in request.form and user.id == obj.user_id:
         if obj:
             db_sess.delete(obj)
