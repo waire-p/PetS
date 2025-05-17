@@ -44,6 +44,26 @@ def articles():
             "title": "Почему важно забирать животных из приюта",
             "summary": "Аргументы в пользу усыновления, а не покупки.",
             "url": "https://harpersbazaar.kz/10-prichin-zabrat-zhivotnoe-iz-prijuta/"
+        },
+        {
+            "title": "Как завести котёнка",
+            "summary": "Полезные советы перед тем, как взять щенка.",
+            "url": "https://www.hillspet.ru/cat-care/new-pet-parent/bringing-home-and-raising-your-new-kitten/"
+        },
+        {
+            "title": "Что нужно знать, перед тем как завести кошку",
+            "summary": "Дополнительные советы.",
+            "url": "https://www.royalcanin.com/ua/ru-ua/cats/thinking-of-getting-a-cat/things-to-consider-before-getting-a-cat/"
+        },
+        {
+            "title": "Как завести попугая",
+            "summary": "Советы для тех кто решился взять попугая.",
+            "url": "https://magizoo.ru/stati/popugai/chto-nuzhno-znat-prezhde-chem-zavesti-popugaya/"
+        },
+        {
+            "title": "Что нужно знать прежде, чем завести экзотическое животное?",
+            "summary": "Советы перед тем как брать какое-либо живтное.",
+            "url": "https://zoo-galereya.ru/articles/chto-nuzhno-znat-prezhde-chem-zavesti-ekzoticheskoe-zhivotnoe_art.html/"
         }
     ]
     return render_template("articles.html", articles=articles, user_now=USER_NOW)
@@ -124,6 +144,16 @@ def create_card():
         return redirect("/")
     elif request.method == 'GET':
         return render_template('create_card.html', user_now=USER_NOW)
+
+
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html', user_now=USER_NOW)
+
+
+@app.route('/rules')
+def rules():
+    return render_template('rules.html', user_now=USER_NOW)
 
 
 if __name__ == '__main__':
