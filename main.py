@@ -28,7 +28,6 @@ def get_user(user_id):
 
 @app.route('/')
 def main_page():
-    global USER_ID
     user_now = get_user(USER_ID)
     return (render_template('base.html', user_now=user_now)
             and render_template('main.html', user_now=user_now))
@@ -207,12 +206,14 @@ def create_card():
 
 @app.route('/privacy')
 def privacy():
-    return render_template('privacy.html', user_now=USER_NOW)
+    user_now = get_user(USER_ID)
+    return render_template('privacy.html', user_now=user_now)
 
 
 @app.route('/rules')
 def rules():
-    return render_template('rules.html', user_now=USER_NOW)
+    user_now = get_user(USER_ID)
+    return render_template('rules.html', user_now=user_now)
 
 
 if __name__ == '__main__':
