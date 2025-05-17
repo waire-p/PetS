@@ -4,7 +4,7 @@ from flask import Flask
 from flask import render_template
 from sqlalchemy.orm import query
 import pymorphy3
-from flask import request, redirect
+from flask import request, redirect, make_response
 import re
 
 from data import db_session
@@ -16,30 +16,42 @@ from form.register import Register
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
 db_session.global_init("db/PetSearch.db")
-USER_NOW = None
+USER_ID = None
+
+
+def get_user(user_id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == user_id).first()
+    db_sess.close()
+    return user
 
 
 @app.route('/')
 def main_page():
-    return (render_template('base.html', user_now=USER_NOW)
-            and render_template('main.html', user_now=USER_NOW))
+    global USER_ID
+    user_now = get_user(USER_ID)
+    return (render_template('base.html', user_now=user_now)
+            and render_template('main.html', user_now=user_now))
 
 
 @app.route('/pets')
 def pet_catalog():
     # posts = sqlalchemy.paginate(query, page=1, per_page=20, error_out=False).items
-    return render_template('pet_catalog.html', user_now=USER_NOW)
+    user_now = get_user(USER_ID)
+    return render_template('pet_catalog.html', user_now=user_now)
 
 
 @app.route('/about')
 def about():
+    user_now = get_user(USER_ID)
     with open('data/about.txt', encoding='utf-8') as file:
         about_text = file.read()
-    return render_template('about.html', about_text=about_text, user_now=USER_NOW)
+    return render_template('about.html', about_text=about_text, user_now=user_now)
 
 
 @app.route('/articles')
 def articles():
+    user_now = get_user(USER_ID)
     articles = [
         {
             "title": "Как подготовить дом к появлению питомца",
@@ -52,7 +64,7 @@ def articles():
             "url": "https://harpersbazaar.kz/10-prichin-zabrat-zhivotnoe-iz-prijuta/"
         }
     ]
-    return render_template("articles.html", articles=articles, user_now=USER_NOW)
+    return render_template("articles.html", articles=articles, user_now=user_now)
 
 
 @app.route('/pets/<int:card_id>', methods=['GET'])
@@ -69,89 +81,87 @@ def pet_card(card_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global USER_NOW
+    global USER_ID
     if request.method == "POST":
         email = request.form.get("email")  # Получаем email из формы
         password = request.form.get("password")  # Получаем пароль
-        print("Email:", email)
-        print("Пароль:", password)
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == email).first()
         if not user:
             return render_template('login.html', message="Почта не зарегистрирована")
-        #if not user.check_password(password):
-            #return render_template('login.html', message="Неверный пароль") Открыть после готовой регистрации
-        USER_NOW = user
+        if not user.check_password(password):
+            return render_template('login.html', message="Неверный пароль")
+        USER_ID = user.id
         return redirect("/")
     return render_template('login.html')
 
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    global USER_NOW
+    global USER_ID
     form = Register()
+    user_now = get_user(USER_ID)
     if form.validate_on_submit():
-        # number = request.form.get('number')
-        # if not re.match(r'^\+7\d{10}$', number):
-        #     flash('Некорректный формат номера')
-        #     return redirect('/phone')
         if form.password.data != form.password_again.data:
-            return render_template("register.html", user_now=USER_NOW, form=form, message="Пароли не совпадают")
+            return render_template("register.html", user_now=user_now, form=form, message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация', form=form, message="Пользователь уже зарегистрирован")
-        try:
+        if not form.phone.data:
+            user = User(login=form.name.data, email=form.email.data, phone="not phone")
+        else:
             user = User(login=form.name.data, email=form.email.data, phone=form.phone.data)
-        except Exception:
-            user = User(login=form.name.data, email=form.email.data, phone=None)
         user.set_password(form.password.data)
         db_sess.add(user)
+        user_in_bd = db_sess.query(User).filter(User.email == user.email).first()
+        USER_ID = user_in_bd.id
         db_sess.commit()
-        USER_NOW = user
         return redirect("/")
-    return render_template("register.html", user_now=USER_NOW, form=form)
+    return render_template("register.html", user_now=user_now, form=form)
 
 
 @app.route("/profile")
 def profile():
-    return render_template("profile.html", user=USER_NOW, user_now=USER_NOW)
+    user_now = get_user(USER_ID)
+    return render_template("profile.html", user=user_now, user_now=user_now)
 
 
 @app.route("/phone", methods=['GET', 'POST'])
 def phone():
-    global USER_NOW
+    global USER_ID
+    user_now = get_user(USER_ID)
     if request.method == "POST":
         number = request.form.get('number')
         if not re.match(r'^\+7\d{10}$', number):
             flash('Некорректный формат номера')
             return redirect('/phone')
         db_sess = db_session.create_session()
-        user = db_sess.query(User).get(USER_NOW.id)
+        user = db_sess.query(User).filter(User.id == USER_ID).first()
         user.phone = number
-        USER_NOW = user
         db_sess.commit()
         return redirect('/profile')
-    return render_template("phone.html", user_now=USER_NOW)
+    return render_template("phone.html", user_now=user_now)
 
 
 @app.route("/exit")
 def exit():
-    global USER_NOW
-    USER_NOW = None
+    global USER_ID
+    USER_ID = None
     return redirect("/")
 
 
 @app.route('/create_card', methods=['GET', 'POST'])
 def create_card():
-    global USER_NOW
+    global USER_ID
     morph = pymorphy3.MorphAnalyzer()
+    user_now = get_user(USER_ID)
     if request.method == "POST":
         #photo = request.form.get("file")
         db_sess = db_session.create_session()
         card = PetCard()
 
         for user in db_sess.query(User).all():
-            if user.login == str(USER_NOW).split()[2]:
+            if user.login == str(user_now).split()[2]:
                 card.user_id = user.id
                 card.contacts = user.phone
                 break
@@ -172,7 +182,7 @@ def create_card():
         db_sess.commit()
         return redirect("/")
     elif request.method == 'GET':
-        return render_template('create_card.html', user_now=USER_NOW)
+        return render_template('create_card.html', user_now=user_now)
 
 
 if __name__ == '__main__':

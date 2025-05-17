@@ -42,15 +42,20 @@
             </a>
         {% endfor %}
     </div>
-    <div>
-        {{ form.phone.label }}<br>
-        {{ form.phone(class="form-control") }}<br>
+        {{ form.phone.label }}
+        {{ form.phone(
+            class="form-control",
+            id="phoneInput",
+            pattern="^\\+7\\d{10}$",
+            title="Формат: +79991234567 (11 цифр)",
+            placeholder="+79991234567 (необязательно)",
+        ) }} <br>
+
         {% for error in form.phone.errors %}
-            <a class="alert alert-danger" role="alert">
+            <div class="alert alert-danger mt-2" role="alert">
                 {{ error }}
-            </a>
+            </div>
         {% endfor %}
-    </div>
       <h5 class="h5 mb-3 fw-normal text-center color-danger">{{ message }}</h5>
     <h3 class="h3 mb-3 fw-normal text-center">{{ form.submit(type="submit", class="btn btn-danger w-75") }}</h3>
 

@@ -24,7 +24,7 @@ a {font-size: 18px}
     <div class="col">
         <a>Ваш номер телефона</a><br>
         <ul>
-            {% if user.phone != None %}
+            {% if user.phone != "not phone" %}
         <li><a><em> {{ user.phone }}</em></a>
             {% else %}
         <li><button type="button" onclick="location.href='/phone'" class="btn btn-outline-danger me-2">Привязать</button></li>
