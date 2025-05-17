@@ -1,0 +1,8 @@
+Flask
+gunicorn
+sqlalchemy
+pymorphy3
+lxml
+requests
+beautifulsoup4
+python-docx
