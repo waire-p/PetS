@@ -132,6 +132,8 @@ def pet_card(card_id):
                 age = str(age_value) + ' ' + res.make_agree_with_number(age_value).word
                 if user.phone == 'not phone':
                     phone = 'Данные отсутствуют'
+                else:
+                    phone = user.phone
                 d = {'name': card.name, 'age': age, 'gender': card.gender,
                      'vaccinations': card.vaccinations, 'diseases': card.diseases, 'about': card.about,
                      'phone': phone, 'email': user.email}
