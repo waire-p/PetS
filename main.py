@@ -130,9 +130,11 @@ def pet_card(card_id):
                         break
                 res = morph.parse(str(age_units_name))[0]
                 age = str(age_value) + ' ' + res.make_agree_with_number(age_value).word
+                if user.phone == 'not phone':
+                    phone = 'Данные отсутствуют'
                 d = {'name': card.name, 'age': age, 'gender': card.gender,
                      'vaccinations': card.vaccinations, 'diseases': card.diseases, 'about': card.about,
-                     'phone': user.phone, 'email': user.email}
+                     'phone': phone, 'email': user.email}
                 creator_id = str(user).split()[2]
                 return render_template('pet_card.html', **d, user_id = creator_id, user_now=user_now)
         return render_template('pet_error.html', user_now=user_now)
@@ -184,18 +186,15 @@ def profile():
     morph = MorphAnalyzer()
     user_now = get_user(USER_ID)
     db_sess = db_session.create_session()
-    for user in db_sess.query(User).all():
-        if user.login == USER_ID:
-            user_id = user.id
-            break
+
     cards = []
     page = request.args.get('page', 1, type=int)
     per_page = 12
-    total_items = len(db_sess.query(PetCard).filter(PetCard.user_id == user_id).all())
+    total_items = len(db_sess.query(PetCard).filter(PetCard.user_id == USER_ID).all())
     total_pages = (total_items + per_page - 1) // per_page
     start = (page - 1) * per_page
     end = start + per_page
-    for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).filter(PetCard.user_id == user_id).all()[start:end]:
+    for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).filter(PetCard.user_id == USER_ID).all()[start:end]:
         about = card.about
         age_value, age_id = card.age_value, card.age_id
         age_units_name = ''
@@ -254,17 +253,14 @@ def edit_card(card_id):
         return render_template('perm_error.html')
 
 
-@app.route('/create_card', methods=['GET', 'POST'])
+@app.route('/pets/create_card', methods=['GET', 'POST'])
 def create_card():
     user_now = get_user(USER_ID)
+    print(user_now)
     if request.method == "POST":
         db_sess = db_session.create_session()
         card = PetCard()
-
-        for user in db_sess.query(User).all():
-            if user.login == USER_ID:
-                card.user_id = user.id
-                break
+        card.user_id = USER_ID
         card.name = request.form.get("name")  # Получаем имя питомца
         card.age_id = int(request.form.get('age2'))
         card.age_value = int(request.form.get("age1"))# Получаем возраст
