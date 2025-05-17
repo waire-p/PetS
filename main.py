@@ -12,6 +12,7 @@ from data.create_age_table import create_table
 from data.pet_age import PetAge
 from data.user import User
 from form.register import Register
+import re
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0yKJg9B62haFjq7K2gh1'
@@ -25,6 +26,7 @@ def get_user(user_id):
     db_sess.close()
     return user
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html')
@@ -36,6 +38,23 @@ def main_page():
     create_table()
     return (render_template('base.html', user_now=user_now)
             and render_template('main.html', user_now=user_now))
+
+
+@app.route("/phone", methods=['GET', 'POST'])
+def phone():
+    global USER_ID
+    user_now = get_user(USER_ID)
+    if request.method == "POST":
+        number = request.form.get('number')
+        if not re.match(r'^\+7\d{10}$', number):
+            flash('Некорректный формат номера')
+            return redirect('/phone')
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == USER_ID).first()
+        user.phone = number
+        db_sess.commit()
+        return redirect('/profile')
+    return render_template("phone.html", user_now=user_now)
 
 
 @app.route('/pets')
@@ -62,7 +81,7 @@ def pet_catalog():
         age = str(age_value) + ' ' + res.make_agree_with_number(age_value).word
         if len(about) >= 65:
             about = card.about[:63] + '...'
-        cards.append({'id':card.id, 'name': card.name, 'age': age, 'about': about, 'gender': card.gender})
+        cards.append({'id': card.id, 'name': card.name, 'age': age, 'about': about, 'gender': card.gender})
     return render_template('pet_catalog.html', user_now=user_now, cards=cards, page=page, total_pages=total_pages)
 
 
@@ -138,7 +157,7 @@ def pet_card(card_id):
                      'vaccinations': card.vaccinations, 'diseases': card.diseases, 'about': card.about,
                      'phone': phone, 'email': user.email}
                 creator_id = str(user).split()[2]
-                return render_template('pet_card.html', **d, user_id = creator_id, user_now=user_now)
+                return render_template('pet_card.html', **d, user_id=creator_id, user_now=user_now)
         return render_template('pet_error.html', user_now=user_now)
 
 
@@ -169,7 +188,8 @@ def register():
             return render_template("register.html", user_now=user_now, form=form, message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация', form=form, message="Пользователь уже зарегистрирован")
+            return render_template('register.html', title='Регистрация', form=form,
+                                   message="Пользователь уже зарегистрирован")
         if not form.phone.data:
             user = User(login=form.name.data, email=form.email.data, phone="not phone")
         else:
@@ -196,7 +216,8 @@ def profile():
     total_pages = (total_items + per_page - 1) // per_page
     start = (page - 1) * per_page
     end = start + per_page
-    for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).filter(PetCard.user_id == USER_ID).all()[start:end]:
+    for card in db_sess.query(PetCard).order_by(PetCard.created_date.desc()).filter(PetCard.user_id == USER_ID).all()[
+                start:end]:
         about = card.about
         age_value, age_id = card.age_value, card.age_id
         age_units_name = ''
@@ -219,16 +240,17 @@ def exit():
     USER_ID = None
     return redirect("/")
 
+
 @app.route('/pets/<int:card_id>/edit_card', methods=['GET', 'POST'])
 def edit_card(card_id):
     user_now = get_user(USER_ID)
     db_sess = db_session.create_session()
-    card =  db_sess.query(PetCard).filter(PetCard.id == card_id).first()
+    card = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
     user = db_sess.query(User).filter(User.id == USER_ID).first()
 
     if request.method == "POST" and user.id == card.user_id:
         if request.form.get("name") != '':
-            card.name = request.form.get("name") # Получаем имя питомца
+            card.name = request.form.get("name")  # Получаем имя питомца
         if request.form.get('age2') != '':
             card.age_id = int(request.form.get('age2'))
         if request.form.get("age1") != '':
@@ -265,7 +287,7 @@ def create_card():
         card.user_id = USER_ID
         card.name = request.form.get("name")  # Получаем имя питомца
         card.age_id = int(request.form.get('age2'))
-        card.age_value = int(request.form.get("age1"))# Получаем возраст
+        card.age_value = int(request.form.get("age1"))  # Получаем возраст
         card.gender = request.form.get("gender")  # Получаем пол животного
         vac = request.form.get("vaccinations")  # Получаем информацию о прививках
         dis = request.form.get("diseases")  # Получаем инфу о болезнях
@@ -295,13 +317,12 @@ def rules():
     return render_template('rules.html', user_now=user_now)
 
 
-
 @app.route('/pets/<int:card_id>/delete_card', methods=['GET', 'POST'])
 def delete_card(card_id):
     user_now = get_user(USER_ID)
     db_sess = db_session.create_session()
     obj = db_sess.query(PetCard).filter(PetCard.id == card_id).first()
-    user = db_sess.query(User).filter(User.id ==  USER_ID).first()
+    user = db_sess.query(User).filter(User.id == USER_ID).first()
 
     if request.method == 'GET' and user.id == obj.user_id:
         return render_template('delete_card.html', user_now=user_now)
@@ -312,8 +333,8 @@ def delete_card(card_id):
             return redirect("/")
         else:
             return abort(404)
-    elif 'no'in request.form and user.id == obj.user_id:
-        return  redirect('/profile')
+    elif 'no' in request.form and user.id == obj.user_id:
+        return redirect('/profile')
     elif user.id != obj.user_id:
         return render_template('perm_error.html')
 
